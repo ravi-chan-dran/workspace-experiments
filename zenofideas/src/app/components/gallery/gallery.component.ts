@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { TrendingService, TrendingImage } from '../../services/trending.service';
 
 @Component({
@@ -10,6 +10,7 @@ import { TrendingService, TrendingImage } from '../../services/trending.service'
           <img [src]="img.thumbnail_url" [alt]="img.original_url" />
         </div>
       </div>
+      <div #loadMoreAnchor class="loading-anchor"></div>
     </section>
   `,
   styles: [
@@ -37,17 +38,54 @@ import { TrendingService, TrendingImage } from '../../services/trending.service'
           column-count: 2;
         }
       }
+      .loading-anchor {
+        height: 1px;
+      }
     `
   ]
 })
-export class GalleryComponent implements OnInit {
+export class GalleryComponent implements OnInit, OnDestroy {
   images: TrendingImage[] = [];
+
+  @ViewChild('loadMoreAnchor', { static: true }) anchor!: ElementRef<HTMLDivElement>;
+
+  private observer?: IntersectionObserver;
+  private seed = Math.floor(Math.random() * 1000);
+  private start = 0;
+  private readonly limit = 10;
+  private loading = false;
 
   constructor(private trendingService: TrendingService) {}
 
   ngOnInit(): void {
-    // generate a random seed for the trending images
-    const seed = Math.floor(Math.random() * 100);
-    this.trendingService.getTrending(seed).subscribe(data => this.images = data);
+    this.loadMore();
+    this.setupObserver();
+  }
+
+  ngOnDestroy(): void {
+    this.observer?.disconnect();
+  }
+
+  private setupObserver(): void {
+    this.observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        this.loadMore();
+      }
+    });
+    this.observer.observe(this.anchor.nativeElement);
+  }
+
+  loadMore(): void {
+    if (this.loading) {
+      return;
+    }
+    this.loading = true;
+    this.trendingService
+      .getTrending(this.seed, this.start, this.limit)
+      .subscribe(data => {
+        this.images = [...this.images, ...data];
+        this.start += this.limit;
+        this.loading = false;
+      });
   }
 }
