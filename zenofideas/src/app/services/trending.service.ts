@@ -13,7 +13,7 @@ export class TrendingService {
 
   constructor(private http: HttpClient) {}
 
-  getTrending(seed = 100, start = 0, limit = 10): Observable<TrendingImage[]> {
+  getTrending(seed = 100, start = 2, limit = 10): Observable<TrendingImage[]> {
     const url = `${this.api}/trending?seed=${seed}&start=${start}&limit=${limit}`;
     return this.http.get<TrendingImage[]>(url);
   }

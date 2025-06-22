@@ -46,6 +46,8 @@ export class GalleryComponent implements OnInit {
   constructor(private trendingService: TrendingService) {}
 
   ngOnInit(): void {
-    this.trendingService.getTrending().subscribe(data => this.images = data);
+    // generate a random seed for the trending images
+    const seed = Math.floor(Math.random() * 100);
+    this.trendingService.getTrending(seed).subscribe(data => this.images = data);
   }
 }
