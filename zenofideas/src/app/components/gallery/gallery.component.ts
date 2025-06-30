@@ -29,7 +29,8 @@ import { TrendingService, TrendingImage } from '../../services/trending.service'
         transform: translateY(-4px);
       }
       img {
-        width: 100%;
+        max-width: 100%;
+        height: auto;
         border-radius: 8px;
         display: block;
       }
