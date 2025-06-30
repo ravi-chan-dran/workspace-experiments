@@ -18,7 +18,10 @@ app.use('/api/random-pose', async (req, res) => {
 
 app.use('/api/trending', async (req, res) => {
   try {
-    const { seed = 100, start = 0, limit = 10 } = req.query;
+    // Generate seed value randomly
+    seed = Math.floor(Math.random() * 1000);
+    console.log(`Using seed: ${seed}`);
+    const { seed = seed, start = 0, limit = 10 } = req.query;
     const url = `${API_URL}/trending?seed=${seed}&start=${start}&limit=${limit}`;
     const response = await fetch(url);
     const data = await response.json();

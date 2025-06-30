@@ -7,7 +7,7 @@ import { TrendingService, TrendingImage } from '../../services/trending.service'
     <section id="gallery" class="gallery" appReveal>
       <div class="masonry">
         <div class="item" *ngFor="let img of images">
-          <img [src]="img.thumbnail_url" [alt]="img.original_url" />
+          <img [src]="img.original_url" [alt]="img.thumbnail_url" />
         </div>
       </div>
       <div #loadMoreAnchor class="loading-anchor"></div>

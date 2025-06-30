@@ -43,8 +43,14 @@ export class AppComponent implements OnInit, OnDestroy {
       Math.floor(frac * (this.images.length - 1)),
     );
     const url = `url(${this.images[idx].thumbnail_url})`;
+    
+    this.renderer.setStyle(document.body, 'imageRendering', 'auto'); // Default rendering
+    this.renderer.setStyle(document.body, 'imageRendering', 'crisp-edges'); // For pixelated images
+    this.renderer.setStyle(document.body, 'imageRendering', 'high-quality'); // For smoother rendering
     this.renderer.setStyle(document.body, 'backgroundImage', url);
-    this.renderer.setStyle(document.body, 'backgroundSize', 'cover');
+
+    this.renderer.setStyle(document.body, 'filter', 'contrast(1.2) brightness(1.1)');
+    this.renderer.setStyle(document.body, 'backgroundSize', 'contain');
     this.renderer.setStyle(document.body, 'backgroundPosition', 'center');
     this.renderer.setStyle(
       document.body,
