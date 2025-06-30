@@ -14,6 +14,7 @@ import { RandomPoseComponent } from './components/random-pose/random-pose.compon
 import { GalleryComponent } from './components/gallery/gallery.component';
 import { ContactComponent } from './components/contact/contact.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { ScreenshotsComponent } from './components/screenshots/screenshots.component';
 import { RevealDirective } from './directives/reveal.directive';
 
 @NgModule({
@@ -27,6 +28,7 @@ import { RevealDirective } from './directives/reveal.directive';
     GalleryComponent,
     ContactComponent,
     FooterComponent,
+    ScreenshotsComponent,
     RevealDirective
   ],
   imports: [
