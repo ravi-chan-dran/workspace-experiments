@@ -9,7 +9,10 @@ export interface TrendingImage {
 
 @Injectable({ providedIn: 'root' })
 export class TrendingService {
-  private api = 'https://posedirector-service-601906407780.us-west4.run.app';
+  // Point to the local API proxy to avoid CORS issues when requesting the
+  // trending endpoint. The proxy server forwards requests to the actual
+  // posedirector service and adds the necessary CORS headers.
+  private api = '/api';
 
   constructor(private http: HttpClient) {}
 
