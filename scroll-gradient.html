@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smooth Scroll Gradient</title>
+<style>
+  html, body {
+    height: 200vh;
+    margin: 0;
+    scroll-behavior: smooth;
+    font-family: Arial, sans-serif;
+  }
+  body {
+    background: linear-gradient(0deg, #ff7e5f, #feb47b);
+    transition: background 0.3s linear;
+  }
+</style>
+</head>
+<body>
+  <h1 style="margin: 50vh 0; text-align: center;">Scroll Down</h1>
+  <script>
+    const start = ['#ff7e5f', '#feb47b'];
+    const end = ['#6a11cb', '#2575fc'];
+    let ticking = false;
+
+    function hexToRgb(hex) {
+      const num = parseInt(hex.replace('#',''), 16);
+      return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+    }
+
+    function mixColor(a, b, fraction) {
+      const c1 = hexToRgb(a), c2 = hexToRgb(b);
+      const r = Math.round(c1.r + (c2.r - c1.r) * fraction);
+      const g = Math.round(c1.g + (c2.g - c1.g) * fraction);
+      const bval = Math.round(c1.b + (c2.b - c1.b) * fraction);
+      return `rgb(${r}, ${g}, ${bval})`;
+    }
+
+    function updateBackground(scrollY) {
+      const max = document.body.scrollHeight - window.innerHeight;
+      const frac = max ? scrollY / max : 0;
+      const color1 = mixColor(start[0], end[0], frac);
+      const color2 = mixColor(start[1], end[1], frac);
+      document.body.style.background = `linear-gradient(0deg, ${color1}, ${color2})`;
+    }
+
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateBackground(scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  </script>
+</body>
+</html>
