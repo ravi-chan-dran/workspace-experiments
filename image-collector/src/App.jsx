@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
+import ImageCard from './components/ImageCard.jsx'
 
 // Key used for storing images in localStorage
-const STORAGE_KEY = 'image-collector-gallery'
+const STORAGE_KEY = 'image-collector-gallery-v2'
 
 // Load images from localStorage
 const loadImages = () => {
@@ -35,19 +36,32 @@ function App() {
   const handleFiles = useCallback(async (files) => {
     const newImages = []
     for (const file of files) {
+      if (!file.type.startsWith('image/')) continue
       const reader = new FileReader()
       const dataUrl = await new Promise((resolve) => {
         reader.onload = () => resolve(reader.result)
         reader.readAsDataURL(file)
       })
+      const dims = await new Promise((resolve) => {
+        const img = new Image()
+        img.onload = () => resolve({ width: img.width, height: img.height })
+        img.src = dataUrl
+      })
       newImages.push({
         id: crypto.randomUUID(),
         name: file.name,
         time: new Date().toISOString(),
+        size: file.size,
+        width: dims.width,
+        height: dims.height,
         dataUrl,
+        resized: null,
+        uploadStatus: 'idle',
       })
     }
-    setImages((prev) => [...newImages, ...prev])
+    if (newImages.length) {
+      setImages((prev) => [...newImages, ...prev])
+    }
   }, [])
 
   // Input change handler
@@ -74,6 +88,11 @@ function App() {
     setImages((prev) => prev.filter((img) => img.id !== id))
   }
 
+  // Update an image entry
+  const updateImage = (updated) => {
+    setImages((prev) => prev.map((img) => (img.id === updated.id ? updated : img)))
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4">
       <header className="text-2xl font-bold mb-4">Image Collector</header>
@@ -93,26 +112,17 @@ function App() {
         />
       </div>
 
-      <section className="mt-6 grid gap-4 w-full" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
+      <section
+        className="mt-6 grid gap-4 w-full"
+        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}
+      >
         {images.map((img) => (
-          <div
+          <ImageCard
             key={img.id}
-            className="relative bg-white rounded shadow overflow-hidden flex flex-col items-center p-2 animate-fadeIn"
-          >
-            <img src={img.dataUrl} alt={img.name} className="w-full h-32 object-cover mb-2" />
-            <div className="text-sm font-semibold truncate w-full text-center" title={img.name}>
-              {img.name}
-            </div>
-            <div className="text-xs text-gray-500 mb-1">
-              {new Date(img.time).toLocaleString()}
-            </div>
-            <button
-              className="absolute top-1 right-1 text-red-500 bg-white rounded-full px-2 py-0.5 text-xs"
-              onClick={() => deleteImage(img.id)}
-            >
-              Delete
-            </button>
-          </div>
+            image={img}
+            onDelete={deleteImage}
+            onUpdate={updateImage}
+          />
         ))}
       </section>
     </div>
