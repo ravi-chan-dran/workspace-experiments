@@ -12,3 +12,19 @@
 .animate-fadeIn {
   animation: fadeIn 0.5s ease-in-out;
 }
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.animate-fadeOut {
+  animation: fadeOut 0.3s ease-in-out forwards;
+}
+
+.spinner {
+  border-top-color: #3b82f6; /* Tailwind blue-500 */
+  border-right-color: #3b82f6;
+  border-bottom-color: #3b82f6;
+  border-left-color: transparent;
+}
